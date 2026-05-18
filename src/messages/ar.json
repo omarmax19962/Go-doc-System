@@ -1,0 +1,162 @@
+{
+  "nav": {
+    "today": "اليوم",
+    "patients": "المرضى",
+    "notes": "الملاحظات",
+    "profile": "الملف الشخصي",
+    "review": "المراجعة",
+    "doctors": "الأطباء",
+    "insights": "التقارير",
+    "logout": "تسجيل الخروج"
+  },
+  "auth": {
+    "title": "جو دوك",
+    "subtitle": "منصة العمليات",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "login": "تسجيل الدخول",
+    "logging_in": "جارٍ تسجيل الدخول...",
+    "error": "البريد الإلكتروني أو كلمة المرور غير صحيحة"
+  },
+  "patients": {
+    "title": "المرضى",
+    "new": "مريض جديد",
+    "search": "ابحث بالاسم أو رقم الهاتف...",
+    "filter_status": "تصفية حسب الحالة",
+    "all_statuses": "جميع الحالات",
+    "status": {
+      "lead": "مهتم",
+      "follow_up": "متابعة",
+      "didnt_reply": "لم يرد",
+      "booked": "محجوز",
+      "active": "نشط",
+      "paused": "متوقف مؤقتاً",
+      "discharged": "مُخرَّج",
+      "lost": "منسحب"
+    },
+    "source": {
+      "phone": "مكالمة هاتفية",
+      "whatsapp": "واتساب",
+      "referral": "إحالة",
+      "other": "أخرى"
+    },
+    "fields": {
+      "name": "الاسم الكامل",
+      "phone": "رقم الهاتف",
+      "dob": "تاريخ الميلاد",
+      "gender": "الجنس",
+      "complaint": "الشكوى الرئيسية",
+      "source": "مصدر التواصل",
+      "address": "العنوان",
+      "physician": "الطبيب المُحيل",
+      "notes": "ملاحظات إدارية"
+    },
+    "gender": {
+      "male": "ذكر",
+      "female": "أنثى"
+    },
+    "no_patients": "لا يوجد مرضى",
+    "loading": "جارٍ تحميل المرضى..."
+  },
+  "visits": {
+    "title": "زيارات اليوم",
+    "no_visits": "لا توجد زيارات مجدولة اليوم",
+    "type": {
+      "assessment": "تقييم",
+      "treatment": "علاج",
+      "discharge": "خروج"
+    },
+    "status": {
+      "scheduled": "مجدولة",
+      "confirmed": "مؤكدة",
+      "in_progress": "جارية",
+      "completed": "مكتملة",
+      "cancelled": "ملغاة",
+      "no_show": "لم يحضر",
+      "rescheduled": "أُعيد جدولتها"
+    },
+    "start": "بدء الزيارة",
+    "complete": "إنهاء الزيارة",
+    "navigate": "الملاحة",
+    "call": "الاتصال بالمريض",
+    "new": "زيارة جديدة"
+  },
+  "notes": {
+    "title": "الملاحظات السريرية",
+    "quick_sheet": "النموذج السريع",
+    "full_sheet": "النموذج الكامل",
+    "pain_before": "الألم قبل الجلسة",
+    "pain_after": "الألم بعد الجلسة",
+    "what_done": "ما تم تنفيذه",
+    "patient_response": "استجابة المريض",
+    "next_visit": "توصية الزيارة التالية",
+    "red_flags": "علامات تحذيرية",
+    "red_flags_detail": "تفاصيل العلامات التحذيرية",
+    "response": {
+      "better": "تحسّن",
+      "same": "نفس الحال",
+      "worse": "تدهور",
+      "mixed": "متذبذب"
+    },
+    "review_status": {
+      "draft": "مسودة",
+      "submitted": "مُرسَلة للمراجعة",
+      "under_review": "قيد المراجعة",
+      "approved": "معتمدة",
+      "approved_with_comment": "معتمدة مع تعليق",
+      "returned": "مُعادة للتعديل"
+    },
+    "submit": "إرسال للمراجعة",
+    "approve": "اعتماد",
+    "approve_comment": "اعتماد مع تعليق",
+    "send_back": "إعادة للتعديل",
+    "save_draft": "حفظ كمسودة"
+  },
+  "review": {
+    "title": "مراجعة الملاحظات",
+    "queue": "قائمة المراجعة",
+    "empty": "لا توجد ملاحظات في انتظار المراجعة",
+    "oldest_first": "الأقدم أولاً"
+  },
+  "doctors": {
+    "title": "الأطباء",
+    "new": "إضافة طبيب",
+    "specialty": "التخصص",
+    "coverage": "مناطق التغطية",
+    "active": "نشط",
+    "inactive": "غير نشط"
+  },
+  "programs": {
+    "title": "البرامج العلاجية",
+    "new": "برنامج جديد",
+    "upload": "رفع مستند",
+    "create_form": "إنشاء من نموذج",
+    "diagnosis": "التشخيص الرئيسي",
+    "duration": "مدة البرنامج",
+    "weeks": "أسابيع",
+    "phases": "المراحل",
+    "phase": "المرحلة",
+    "goal": "الهدف"
+  },
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "view": "عرض",
+    "back": "رجوع",
+    "loading": "جارٍ التحميل...",
+    "error": "حدث خطأ ما",
+    "success": "تم الحفظ بنجاح",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "search": "بحث",
+    "filter": "تصفية",
+    "all": "الكل",
+    "none": "لا شيء",
+    "yes": "نعم",
+    "no": "لا",
+    "or": "أو",
+    "required": "مطلوب"
+  }
+}

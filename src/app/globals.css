@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  /* Go Doc brand palette */
+  --color-primary: #0d6e6e;
+  --color-primary-foreground: #ffffff;
+  --color-primary-light: #e6f4f4;
+  --color-primary-dark: #094f4f;
+
+  --color-background: #f8fafb;
+  --color-surface: #ffffff;
+  --color-border: #e2e8f0;
+  --color-muted: #64748b;
+  --color-muted-bg: #f1f5f9;
+
+  --color-success: #16a34a;
+  --color-success-bg: #dcfce7;
+  --color-warning: #d97706;
+  --color-warning-bg: #fef3c7;
+  --color-danger: #dc2626;
+  --color-danger-bg: #fee2e2;
+  --color-info: #2563eb;
+  --color-info-bg: #dbeafe;
+
+  /* Visit status colors */
+  --color-status-scheduled: #2563eb;
+  --color-status-confirmed: #7c3aed;
+  --color-status-in-progress: #d97706;
+  --color-status-completed: #16a34a;
+  --color-status-cancelled: #64748b;
+  --color-status-no-show: #dc2626;
+
+  /* Patient status colors */
+  --color-patient-lead: #2563eb;
+  --color-patient-follow-up: #7c3aed;
+  --color-patient-didnt-reply: #64748b;
+  --color-patient-booked: #0d6e6e;
+  --color-patient-active: #16a34a;
+  --color-patient-paused: #d97706;
+  --color-patient-discharged: #475569;
+  --color-patient-lost: #dc2626;
+
+  --font-sans: "Inter", "Noto Sans Arabic", system-ui, sans-serif;
+  --radius: 0.5rem;
+}
+
+/* RTL support */
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Arabic font import */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');

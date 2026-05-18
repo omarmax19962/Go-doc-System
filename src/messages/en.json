@@ -1,0 +1,162 @@
+{
+  "nav": {
+    "today": "Today",
+    "patients": "Patients",
+    "notes": "Notes",
+    "profile": "Profile",
+    "review": "Review",
+    "doctors": "Doctors",
+    "insights": "Insights",
+    "logout": "Logout"
+  },
+  "auth": {
+    "title": "Go Doc",
+    "subtitle": "Operations Platform",
+    "email": "Email address",
+    "password": "Password",
+    "login": "Sign in",
+    "logging_in": "Signing in...",
+    "error": "Invalid email or password"
+  },
+  "patients": {
+    "title": "Patients",
+    "new": "New Patient",
+    "search": "Search by name or phone...",
+    "filter_status": "Filter by status",
+    "all_statuses": "All statuses",
+    "status": {
+      "lead": "Lead",
+      "follow_up": "Follow-up",
+      "didnt_reply": "Didn't reply",
+      "booked": "Booked",
+      "active": "Active",
+      "paused": "Paused",
+      "discharged": "Discharged",
+      "lost": "Lost"
+    },
+    "source": {
+      "phone": "Phone",
+      "whatsapp": "WhatsApp",
+      "referral": "Referral",
+      "other": "Other"
+    },
+    "fields": {
+      "name": "Full name",
+      "phone": "Phone number",
+      "dob": "Date of birth",
+      "gender": "Gender",
+      "complaint": "Chief complaint",
+      "source": "Source channel",
+      "address": "Home address",
+      "physician": "Referring physician",
+      "notes": "Admin notes"
+    },
+    "gender": {
+      "male": "Male",
+      "female": "Female"
+    },
+    "no_patients": "No patients found",
+    "loading": "Loading patients..."
+  },
+  "visits": {
+    "title": "Today's Visits",
+    "no_visits": "No visits scheduled for today",
+    "type": {
+      "assessment": "Assessment",
+      "treatment": "Treatment",
+      "discharge": "Discharge"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "confirmed": "Confirmed",
+      "in_progress": "In Progress",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No Show",
+      "rescheduled": "Rescheduled"
+    },
+    "start": "Start Visit",
+    "complete": "Complete Visit",
+    "navigate": "Navigate",
+    "call": "Call Patient",
+    "new": "New Visit"
+  },
+  "notes": {
+    "title": "Clinical Notes",
+    "quick_sheet": "Quick Sheet",
+    "full_sheet": "Full Sheet",
+    "pain_before": "Pain before session",
+    "pain_after": "Pain after session",
+    "what_done": "What was done",
+    "patient_response": "Patient response",
+    "next_visit": "Next visit recommendation",
+    "red_flags": "Red flags noted",
+    "red_flags_detail": "Red flag details",
+    "response": {
+      "better": "Better",
+      "same": "Same",
+      "worse": "Worse",
+      "mixed": "Mixed"
+    },
+    "review_status": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "under_review": "Under Review",
+      "approved": "Approved",
+      "approved_with_comment": "Approved with Comment",
+      "returned": "Returned for Revision"
+    },
+    "submit": "Submit for Review",
+    "approve": "Approve",
+    "approve_comment": "Approve with Comment",
+    "send_back": "Send Back",
+    "save_draft": "Save Draft"
+  },
+  "review": {
+    "title": "Note Review",
+    "queue": "Review Queue",
+    "empty": "No notes awaiting review",
+    "oldest_first": "Oldest first"
+  },
+  "doctors": {
+    "title": "Doctors",
+    "new": "Add Doctor",
+    "specialty": "Specialty",
+    "coverage": "Coverage Areas",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "programs": {
+    "title": "Programs",
+    "new": "New Program",
+    "upload": "Upload Document",
+    "create_form": "Create from Form",
+    "diagnosis": "Primary Diagnosis",
+    "duration": "Program Duration",
+    "weeks": "weeks",
+    "phases": "Phases",
+    "phase": "Phase",
+    "goal": "Goal"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "success": "Saved successfully",
+    "confirm": "Confirm",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "none": "None",
+    "yes": "Yes",
+    "no": "No",
+    "or": "or",
+    "required": "Required"
+  }
+}
