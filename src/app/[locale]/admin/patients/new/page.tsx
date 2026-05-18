@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { friendlyError } from '@/lib/errors'
 import type { PatientStatus, SourceChannel } from '@/types'
 
 export default function NewPatientPage() {
@@ -33,7 +34,13 @@ export default function NewPatientPage() {
     e.preventDefault()
     setSaving(true)
 
-    // Build minimal location object from text input
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      toast.error('Your session has expired. Please log in again.')
+      setSaving(false)
+      return
+    }
+
     const address = {
       place_id: '',
       display_name: form.address_text,
@@ -51,14 +58,15 @@ export default function NewPatientPage() {
         status: form.status,
         referring_physician: form.referring_physician || null,
         notes: form.notes || null,
-        gender: form.gender || null,
+        gender: (form.gender as 'male' | 'female') || null,
         address,
+        created_by: user.id,
       })
       .select('id')
       .single()
 
     if (error) {
-      toast.error('Failed to save patient: ' + error.message)
+      toast.error(friendlyError(error.message))
       setSaving(false)
       return
     }

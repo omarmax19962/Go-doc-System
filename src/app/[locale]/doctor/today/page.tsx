@@ -20,7 +20,7 @@ export default async function DoctorTodayPage() {
       *,
       patient:patients(id, full_name, phone, complaint, status)
     `)
-    .eq('doctor_id', doctor?.id)
+    .eq('doctor_id', doctor!.id)
     .gte('scheduled_at', startOfDay(today).toISOString())
     .lte('scheduled_at', endOfDay(today).toISOString())
     .order('scheduled_at', { ascending: true })

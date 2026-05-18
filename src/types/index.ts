@@ -55,11 +55,11 @@ export interface Location {
 
 export interface AppUser {
   id: string
-  email: string
+  email?: string | null
   role: UserRole
   full_name: string
-  phone?: string
-  avatar_url?: string
+  phone?: string | null
+  avatar_url?: string | null
   created_at: string
 }
 

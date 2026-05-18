@@ -53,12 +53,16 @@ export default function PatientStatusChanger({
     }
 
     // Log history
-    await supabase.from('patient_status_history').insert({
-      patient_id: patientId,
-      from_status: currentStatus,
-      to_status: selected,
-      note: note || null,
-    })
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      await supabase.from('patient_status_history').insert({
+        patient_id: patientId,
+        changed_by: user.id,
+        from_status: currentStatus,
+        to_status: selected,
+        note: note || null,
+      })
+    }
 
     toast.success(`Status updated to ${STATUS_LABELS[selected]}`)
     setChanged(false)

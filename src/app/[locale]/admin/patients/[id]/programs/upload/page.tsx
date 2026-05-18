@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { friendlyError } from '@/lib/errors'
 import { useRouter, useParams } from 'next/navigation'
 import { Upload, File, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -37,7 +38,7 @@ export default function UploadProgramPage() {
       .upload(path, file)
 
     if (uploadError) {
-      toast.error('Upload failed: ' + uploadError.message)
+      toast.error(friendlyError(uploadError.message))
       setUploading(false)
       return
     }
@@ -67,7 +68,7 @@ export default function UploadProgramPage() {
         .select('assigned_doctor_id')
         .eq('id', patientId)
         .single()
-      doctorId = pd?.assigned_doctor_id
+      doctorId = pd?.assigned_doctor_id ?? undefined
     }
 
     const { error: dbError } = await supabase.from('programs').insert({

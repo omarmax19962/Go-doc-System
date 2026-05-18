@@ -1,14 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { useRouter, useParams } from 'next/navigation'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
+import { createDoctorAction } from '@/app/actions/doctor'
 
 export default function NewDoctorPage() {
-  const supabase = createClient()
   const router = useRouter()
   const { locale } = useParams()
   const [saving, setSaving] = useState(false)
@@ -30,37 +29,10 @@ export default function NewDoctorPage() {
     e.preventDefault()
     setSaving(true)
 
-    // Create auth user via admin (in production use service role key or edge function)
-    // For local dev, we create the user through Supabase auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: form.email,
-      password: form.password,
-      options: {
-        data: {
-          role: 'doctor',
-          full_name: form.full_name,
-          phone: form.phone,
-        },
-      },
-    })
+    const result = await createDoctorAction(form)
 
-    if (authError || !authData.user) {
-      toast.error('Failed to create user: ' + authError?.message)
-      setSaving(false)
-      return
-    }
-
-    // Create doctor record
-    const { error: doctorError } = await supabase.from('doctors').insert({
-      user_id: authData.user.id,
-      specialty: form.specialty,
-      gender: form.gender,
-      covered_locations: [],
-      is_active: true,
-    })
-
-    if (doctorError) {
-      toast.error('User created but doctor profile failed: ' + doctorError.message)
+    if (result.error) {
+      toast.error(result.error)
       setSaving(false)
       return
     }
@@ -103,7 +75,7 @@ export default function NewDoctorPage() {
                 className={inputCls} placeholder="01xxxxxxxxx" dir="ltr" />
             </div>
             <div>
-              <label className={labelCls}>Temporary password *</label>
+              <label className={labelCls}>Password *</label>
               <input required type="password" value={form.password} onChange={e => set('password', e.target.value)}
                 className={inputCls} placeholder="Min 6 characters" dir="ltr" />
             </div>
@@ -120,10 +92,7 @@ export default function NewDoctorPage() {
                 className={inputCls} placeholder="e.g. Musculoskeletal, Neurological, Pediatric" />
             </div>
           </div>
-
-          <p className="text-xs text-muted">
-            Coverage areas can be added after the doctor account is created.
-          </p>
+          <p className="text-xs text-muted">Coverage areas can be added after the account is created.</p>
         </div>
 
         <div className="flex gap-3">

@@ -12,6 +12,7 @@ import {
   BarChart3,
   LogOut,
   Stethoscope,
+  ClipboardList,
 } from 'lucide-react'
 import type { AppUser } from '@/types'
 
@@ -19,9 +20,10 @@ interface Props {
   profile: AppUser
   locale: string
   reviewBadge: number
+  applicationsBadge: number
 }
 
-export default function AdminSidebar({ profile, locale, reviewBadge }: Props) {
+export default function AdminSidebar({ profile, locale, reviewBadge, applicationsBadge }: Props) {
   const t = useTranslations('nav')
   const pathname = usePathname()
   const router = useRouter()
@@ -32,6 +34,7 @@ export default function AdminSidebar({ profile, locale, reviewBadge }: Props) {
     { key: 'patients', href: `/${locale}/admin/patients`, icon: Users },
     { key: 'review', href: `/${locale}/admin/review`, icon: ClipboardCheck, badge: reviewBadge },
     { key: 'doctors', href: `/${locale}/admin/doctors`, icon: UserCog },
+    { key: 'applications', href: `/${locale}/admin/applications`, icon: ClipboardList, badge: applicationsBadge },
     { key: 'insights', href: `/${locale}/admin/insights`, icon: BarChart3 },
   ]
 

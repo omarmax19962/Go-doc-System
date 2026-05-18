@@ -28,7 +28,7 @@ export default async function AdminPatientsPage({
     .order('created_at', { ascending: false })
 
   if (status && STATUS_LIST.includes(status as PatientStatus)) {
-    query = query.eq('status', status)
+    query = query.eq('status', status as PatientStatus)
   }
 
   if (q) {

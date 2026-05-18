@@ -55,11 +55,15 @@ export default function ReviewNoteCard({ note }: { note: any }) {
     }
 
     // Log review action
-    await supabase.from('review_actions').insert({
-      note_id: note.id,
-      action,
-      comment: comment || null,
-    })
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (currentUser) {
+      await supabase.from('review_actions').insert({
+        note_id: note.id,
+        admin_id: currentUser.id,
+        action,
+        comment: comment || null,
+      })
+    }
 
     toast.success(
       action === 'approve' ? 'Note approved' :

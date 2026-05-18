@@ -60,14 +60,16 @@ export default function FullSheetForm({
     if (existingNote) {
       const { error } = await supabase
         .from('visit_notes')
-        .update({ full_sheet: fullSheet })
+        .update({ full_sheet: fullSheet as any })
         .eq('id', existingNote.id)
 
       if (error) { toast.error('Save failed'); setSaving(false); return }
     } else {
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: doc } = await supabase.from('doctors').select('id').eq('user_id', user!.id).single()
       const { error } = await supabase
         .from('visit_notes')
-        .insert({ visit_id: visitId, quick_sheet: {}, full_sheet: fullSheet, review_status: 'draft' })
+        .insert({ visit_id: visitId, doctor_id: doc!.id, quick_sheet: {} as any, full_sheet: fullSheet as any, review_status: 'draft' })
 
       if (error) { toast.error('Save failed'); setSaving(false); return }
     }

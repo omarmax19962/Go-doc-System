@@ -37,7 +37,7 @@ export default async function NewProgramPage({
       .eq('is_active', true)
       .limit(1)
       .single()
-    doctorId = firstDoctor?.id
+    doctorId = firstDoctor?.id ?? null
   }
 
   return (

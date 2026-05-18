@@ -28,7 +28,7 @@ export default async function DoctorLayout({
       <main className="flex-1 overflow-y-auto pb-20">
         {children}
       </main>
-      <DoctorBottomNav locale={locale} profile={profile} />
+      <DoctorBottomNav locale={locale} profile={{ ...profile!, email: user.email }} />
     </div>
   )
 }

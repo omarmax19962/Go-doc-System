@@ -23,17 +23,18 @@ export default async function AdminLayout({
 
   if (profile?.role !== 'admin') redirect(`/${locale}/doctor/today`)
 
-  const { data: reviewCount } = await supabase
-    .from('visit_notes')
-    .select('id', { count: 'exact', head: true })
-    .eq('review_status', 'submitted')
+  const [{ count: reviewCount }, { count: applicationsCount }] = await Promise.all([
+    supabase.from('visit_notes').select('id', { count: 'exact', head: true }).eq('review_status', 'submitted'),
+    supabase.from('doctor_applications').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+  ])
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <AdminSidebar
-        profile={profile}
+        profile={{ ...profile!, email: user.email }}
         locale={locale}
         reviewBadge={reviewCount ?? 0}
+        applicationsBadge={applicationsCount ?? 0}
       />
       <main className="flex-1 overflow-y-auto">
         {children}

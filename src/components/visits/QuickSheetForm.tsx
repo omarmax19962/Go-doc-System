@@ -99,7 +99,7 @@ export default function QuickSheetForm({
       const { error } = await supabase
         .from('visit_notes')
         .update({
-          quick_sheet: quickSheet,
+          quick_sheet: quickSheet as any,
           ...(andSubmit ? {
             review_status: 'submitted',
             submitted_at: new Date().toISOString(),
@@ -109,11 +109,14 @@ export default function QuickSheetForm({
 
       if (error) { toast.error('Save failed'); setSaving(false); setSubmitting(false); return }
     } else {
+      const { data: { user } } = await supabase.auth.getUser()
+      const { data: doc } = await supabase.from('doctors').select('id').eq('user_id', user!.id).single()
       const { error } = await supabase
         .from('visit_notes')
         .insert({
           visit_id: visitId,
-          quick_sheet: quickSheet,
+          doctor_id: doc!.id,
+          quick_sheet: quickSheet as any,
           review_status: andSubmit ? 'submitted' : 'draft',
           ...(andSubmit ? { submitted_at: new Date().toISOString() } : {}),
         })

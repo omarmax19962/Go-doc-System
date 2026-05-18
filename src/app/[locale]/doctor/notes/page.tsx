@@ -23,7 +23,7 @@ export default async function DoctorNotesPage() {
         patient:patients(full_name, complaint)
       )
     `)
-    .eq('doctor_id', doctor?.id)
+    .eq('doctor_id', doctor!.id)
     .order('created_at', { ascending: false })
     .limit(50)
 

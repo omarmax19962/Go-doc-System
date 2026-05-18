@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import createMiddleware from 'next-intl/middleware'
 import { routing } from './i18n/routing'
@@ -31,7 +31,7 @@ export async function middleware(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
@@ -51,6 +51,9 @@ export async function middleware(request: NextRequest) {
 
   // Public routes — no auth needed
   const isAuthRoute = pathname.includes('/auth')
+  const isApplyRoute = pathname.includes('/apply')
+  if (isApplyRoute) return response
+
   if (isAuthRoute) {
     if (user) {
       // Redirect logged-in users away from auth page

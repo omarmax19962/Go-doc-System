@@ -14,7 +14,7 @@ export default async function AdminDoctorsPage({
     .from('doctors')
     .select(`
       *,
-      profile:profiles(full_name, phone, email)
+      profile:profiles(full_name, phone)
     `)
     .order('created_at', { ascending: false })
 

@@ -17,7 +17,7 @@ export default async function DoctorPatientsPage({
 
   const { data: patients } = await supabase
     .from('patients').select('*')
-    .eq('assigned_doctor_id', doctor?.id)
+    .eq('assigned_doctor_id', doctor!.id)
     .order('updated_at', { ascending: false })
 
   const active = patients?.filter(p => ['active','booked'].includes(p.status)) ?? []

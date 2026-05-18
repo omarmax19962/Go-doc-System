@@ -133,7 +133,7 @@ export default function ProgramFormBuilder({
     if (existingProgram) {
       const { error } = await supabase
         .from('programs')
-        .update({ form_data: formData, updated_at: new Date().toISOString() })
+        .update({ form_data: formData as any, updated_at: new Date().toISOString() })
         .eq('id', existingProgram.id)
 
       if (error) { toast.error('Save failed'); setSaving(false); return }
@@ -144,7 +144,7 @@ export default function ProgramFormBuilder({
           patient_id: patientId,
           doctor_id: doctorId,
           source: 'form_generated',
-          form_data: formData,
+          form_data: formData as any,
           is_active: true,
         })
 

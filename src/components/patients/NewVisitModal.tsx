@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
+import { friendlyError } from '@/lib/errors'
 import { useRouter } from 'next/navigation'
 import { CalendarPlus, X } from 'lucide-react'
 import type { VisitType } from '@/types'
@@ -45,6 +46,7 @@ export default function NewVisitModal({
       lng: 0,
     }
 
+    const { data: { user } } = await supabase.auth.getUser()
     const { error } = await supabase.from('visits').insert({
       patient_id: patientId,
       doctor_id: form.doctor_id,
@@ -53,10 +55,11 @@ export default function NewVisitModal({
       scheduled_at: new Date(form.scheduled_at).toISOString(),
       location,
       payment_confirmed: false,
+      created_by: user!.id,
     })
 
     if (error) {
-      toast.error('Failed to create visit: ' + error.message)
+      toast.error(friendlyError(error.message))
       setSaving(false)
       return
     }

@@ -24,7 +24,7 @@ export default async function DoctorPatientDetailPage({
     .from('patients')
     .select('*')
     .eq('id', id)
-    .eq('assigned_doctor_id', doctor?.id) // RLS enforces this too
+    .eq('assigned_doctor_id', doctor!.id) // RLS enforces this too
     .single()
 
   if (!patient) notFound()
