@@ -6,7 +6,7 @@ export default async function ApplicationsPage() {
 
   const { data: applications } = await supabase
     .from('doctor_applications')
-    .select('*')
+    .select('id, full_name, email, phone, specialty, gender, bio, status, rejection_reason, cv_url, created_at')
     .order('created_at', { ascending: false })
 
   return <ApplicationsClient applications={applications ?? []} />

@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { CheckCircle, XCircle, Clock, User, Mail, Phone, Stethoscope, Copy } from 'lucide-react'
+import { CheckCircle, XCircle, User, Mail, Phone, FileText, Copy, RotateCcw } from 'lucide-react'
 import { acceptApplicationAction, rejectApplicationAction } from '@/app/actions/doctor'
 import { formatDistanceToNow } from 'date-fns'
 
@@ -16,24 +17,33 @@ type Application = {
   bio: string | null
   status: 'pending' | 'accepted' | 'rejected'
   rejection_reason: string | null
+  cv_url: string | null
   created_at: string
 }
 
 const STATUS_TABS = ['pending', 'accepted', 'rejected'] as const
 
-export default function ApplicationsClient({ applications }: { applications: Application[] }) {
+export default function ApplicationsClient({ applications: initial }: { applications: Application[] }) {
+  const router = useRouter()
+  const [applications, setApplications] = useState(initial)
   const [tab, setTab] = useState<typeof STATUS_TABS[number]>('pending')
   const [rejectingId, setRejectingId] = useState<string | null>(null)
   const [rejectReason, setRejectReason] = useState('')
   const [loadingId, setLoadingId] = useState<string | null>(null)
-  const [createdCreds, setCreatedCreds] = useState<{ email: string; password: string } | null>(null)
+  const [createdCreds, setCreatedCreds] = useState<{ email: string; password?: string; reactivated?: boolean } | null>(null)
 
   const filtered = applications.filter(a => a.status === tab)
   const pendingCount = applications.filter(a => a.status === 'pending').length
 
-  async function handleAccept(id: string) {
-    setLoadingId(id)
-    const result = await acceptApplicationAction(id)
+  function updateLocalStatus(id: string, status: Application['status'], rejection_reason?: string | null) {
+    setApplications(prev => prev.map(a =>
+      a.id === id ? { ...a, status, rejection_reason: rejection_reason ?? a.rejection_reason } : a
+    ))
+  }
+
+  async function handleAccept(app: Application) {
+    setLoadingId(app.id)
+    const result = await acceptApplicationAction(app.id)
     setLoadingId(null)
 
     if (result.error) {
@@ -41,7 +51,15 @@ export default function ApplicationsClient({ applications }: { applications: App
       return
     }
 
-    setCreatedCreds({ email: result.email!, password: result.tempPassword! })
+    updateLocalStatus(app.id, 'accepted')
+
+    if ((result as any).reactivated) {
+      toast.success('Doctor account re-activated')
+      router.refresh()
+      return
+    }
+
+    setCreatedCreds({ email: (result as any).email, password: (result as any).tempPassword })
     toast.success('Application accepted — account created')
   }
 
@@ -55,6 +73,7 @@ export default function ApplicationsClient({ applications }: { applications: App
       return
     }
 
+    updateLocalStatus(id, 'rejected', rejectReason || null)
     setRejectingId(null)
     setRejectReason('')
     toast.success('Application rejected')
@@ -67,7 +86,7 @@ export default function ApplicationsClient({ applications }: { applications: App
         <p className="text-sm text-muted mt-0.5">{pendingCount} pending review</p>
       </div>
 
-      {/* Credentials modal after accept */}
+      {/* Credentials modal */}
       {createdCreds && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
@@ -88,22 +107,23 @@ export default function ApplicationsClient({ applications }: { applications: App
                   </button>
                 </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs text-muted">Temp Password</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-mono font-medium">{createdCreds.password}</span>
-                  <button onClick={() => { navigator.clipboard.writeText(createdCreds.password); toast.success('Copied') }}
-                    className="text-muted hover:text-gray-700">
-                    <Copy className="w-3.5 h-3.5" />
-                  </button>
+              {createdCreds.password && (
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-muted">Temp Password</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-mono font-medium">{createdCreds.password}</span>
+                    <button onClick={() => { navigator.clipboard.writeText(createdCreds.password!); toast.success('Copied') }}
+                      className="text-muted hover:text-gray-700">
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             <p className="text-xs text-muted text-center mb-4">
               The doctor should change their password after first login.
             </p>
-
             <button onClick={() => setCreatedCreds(null)}
               className="w-full py-2.5 bg-primary hover:bg-primary-dark text-white text-sm font-medium rounded-lg transition">
               Done
@@ -154,9 +174,20 @@ export default function ApplicationsClient({ applications }: { applications: App
               </span>
             </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2 text-xs text-muted">
+            <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
               <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" />{app.email}</span>
               {app.phone && <span className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" />{app.phone}</span>}
+              {app.cv_url && (
+                <a
+                  href={app.cv_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-primary hover:underline font-medium"
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  View CV
+                </a>
+              )}
             </div>
 
             {app.bio && (
@@ -171,8 +202,8 @@ export default function ApplicationsClient({ applications }: { applications: App
               </p>
             )}
 
-            {/* Actions — pending only */}
-            {app.status === 'pending' && (
+            {/* Actions */}
+            {(app.status === 'pending' || app.status === 'rejected') && (
               <div className="mt-4 flex gap-2">
                 {rejectingId === app.id ? (
                   <div className="flex-1 flex gap-2">
@@ -194,16 +225,20 @@ export default function ApplicationsClient({ applications }: { applications: App
                   </div>
                 ) : (
                   <>
-                    <button onClick={() => handleAccept(app.id)} disabled={loadingId === app.id}
+                    <button onClick={() => handleAccept(app)} disabled={loadingId === app.id}
                       className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-success text-white text-sm font-medium rounded-lg hover:bg-green-700 transition disabled:opacity-60">
-                      <CheckCircle className="w-4 h-4" />
-                      {loadingId === app.id ? 'Creating account...' : 'Accept'}
+                      {app.status === 'rejected'
+                        ? <><RotateCcw className="w-4 h-4" />{loadingId === app.id ? '...' : 'Accept anyway'}</>
+                        : <><CheckCircle className="w-4 h-4" />{loadingId === app.id ? 'Creating account...' : 'Accept'}</>
+                      }
                     </button>
-                    <button onClick={() => setRejectingId(app.id)}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2 border border-danger text-danger text-sm font-medium rounded-lg hover:bg-danger-bg transition">
-                      <XCircle className="w-4 h-4" />
-                      Reject
-                    </button>
+                    {app.status === 'pending' && (
+                      <button onClick={() => setRejectingId(app.id)}
+                        className="flex-1 flex items-center justify-center gap-1.5 py-2 border border-danger text-danger text-sm font-medium rounded-lg hover:bg-danger-bg transition">
+                        <XCircle className="w-4 h-4" />
+                        Reject
+                      </button>
+                    )}
                   </>
                 )}
               </div>

@@ -107,6 +107,23 @@ export async function acceptApplicationAction(applicationId: string) {
 
   if (fetchError || !app) return { error: 'Application not found' }
 
+  // If this application was previously accepted (auth_user_id is set), just re-activate
+  if ((app as any).auth_user_id) {
+    const existingUserId = (app as any).auth_user_id as string
+
+    // Re-activate doctor record in case it was deactivated
+    await admin.from('doctors').update({ is_active: true }).eq('user_id', existingUserId)
+
+    await admin
+      .from('doctor_applications')
+      .update({ status: 'accepted', reviewed_by: user.id, reviewed_at: new Date().toISOString() })
+      .eq('id', applicationId)
+
+    revalidatePath('/admin/applications')
+    revalidatePath('/admin/doctors')
+    return { success: true, email: app.email, reactivated: true }
+  }
+
   // Generate a temporary password
   const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'
 
@@ -122,7 +139,7 @@ export async function acceptApplicationAction(applicationId: string) {
   })
 
   if (authError || !authData.user) {
-    return { error: friendlyError(authError?.message ?? '') }
+    return { error: authError?.message ?? 'Failed to create account' }
   }
 
   const { error: doctorError } = await admin
@@ -137,7 +154,7 @@ export async function acceptApplicationAction(applicationId: string) {
 
   if (doctorError) {
     await admin.auth.admin.deleteUser(authData.user.id)
-    return { error: friendlyError(doctorError.message) }
+    return { error: doctorError.message }
   }
 
   await admin
@@ -146,7 +163,8 @@ export async function acceptApplicationAction(applicationId: string) {
       status: 'accepted',
       reviewed_by: user.id,
       reviewed_at: new Date().toISOString(),
-    })
+      auth_user_id: authData.user.id,
+    } as any)
     .eq('id', applicationId)
 
   revalidatePath('/admin/applications')

@@ -95,8 +95,10 @@ export type Database = {
       }
       doctor_applications: {
         Row: {
+          auth_user_id: string | null
           bio: string | null
           created_at: string
+          cv_url: string | null
           email: string
           full_name: string
           gender: Database["public"]["Enums"]["gender"]
@@ -110,8 +112,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auth_user_id?: string | null
           bio?: string | null
           created_at?: string
+          cv_url?: string | null
           email: string
           full_name: string
           gender: Database["public"]["Enums"]["gender"]
@@ -125,8 +129,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auth_user_id?: string | null
           bio?: string | null
           created_at?: string
+          cv_url?: string | null
           email?: string
           full_name?: string
           gender?: Database["public"]["Enums"]["gender"]

@@ -9,6 +9,7 @@ export async function submitApplicationAction(data: {
   specialty: string
   gender: string
   bio?: string
+  cv_url?: string
 }) {
   const admin = createAdminClient()
 
@@ -19,6 +20,7 @@ export async function submitApplicationAction(data: {
     specialty: data.specialty,
     gender: data.gender as 'male' | 'female',
     bio: data.bio || null,
+    cv_url: data.cv_url || null,
   })
 
   if (error) {
