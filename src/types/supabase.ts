@@ -33,6 +33,66 @@ export type Database = {
         }
         Relationships: []
       }
+      clinic_sessions: {
+        Row: {
+          created_at: string
+          date: string
+          doctor_id: string | null
+          duration_min: number
+          exercises: string | null
+          id: string
+          next_appointment: string | null
+          notes: string | null
+          outcome: string | null
+          pain_score: number | null
+          patient_id: string
+          session_number: number | null
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          doctor_id?: string | null
+          duration_min?: number
+          exercises?: string | null
+          id?: string
+          next_appointment?: string | null
+          notes?: string | null
+          outcome?: string | null
+          pain_score?: number | null
+          patient_id: string
+          session_number?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          doctor_id?: string | null
+          duration_min?: number
+          exercises?: string | null
+          id?: string
+          next_appointment?: string | null
+          notes?: string | null
+          outcome?: string | null
+          pain_score?: number | null
+          patient_id?: string
+          session_number?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clinic_sessions_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "doctors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clinic_sessions_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "patients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       doctor_applications: {
         Row: {
           bio: string | null
@@ -257,8 +317,11 @@ export type Database = {
           notes: string | null
           payment_status: string | null
           phone: string
+          primary_diagnosis: string | null
+          primary_icd: string | null
           referring_physician: string | null
           secondary_addresses: Json
+          secondary_diagnoses: Json
           source_channel: Database["public"]["Enums"]["source_channel"]
           status: Database["public"]["Enums"]["patient_status"]
           updated_at: string
@@ -276,8 +339,11 @@ export type Database = {
           notes?: string | null
           payment_status?: string | null
           phone: string
+          primary_diagnosis?: string | null
+          primary_icd?: string | null
           referring_physician?: string | null
           secondary_addresses?: Json
+          secondary_diagnoses?: Json
           source_channel: Database["public"]["Enums"]["source_channel"]
           status?: Database["public"]["Enums"]["patient_status"]
           updated_at?: string
@@ -295,8 +361,11 @@ export type Database = {
           notes?: string | null
           payment_status?: string | null
           phone?: string
+          primary_diagnosis?: string | null
+          primary_icd?: string | null
           referring_physician?: string | null
           secondary_addresses?: Json
+          secondary_diagnoses?: Json
           source_channel?: Database["public"]["Enums"]["source_channel"]
           status?: Database["public"]["Enums"]["patient_status"]
           updated_at?: string
@@ -1360,3 +1429,4 @@ export const Constants = {
     },
   },
 }
+

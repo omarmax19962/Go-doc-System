@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { toast } from 'sonner'
 import { friendlyError } from '@/lib/errors'
+import { DiagnosisPicker, SecondaryDiagnosisPicker } from '@/components/patients/DiagnosisPicker'
+import type { Diagnosis } from '@/components/patients/DiagnosisPicker'
 import type { PatientStatus, SourceChannel } from '@/types'
 
 export default function NewPatientPage() {
@@ -12,8 +14,10 @@ export default function NewPatientPage() {
   const { locale } = useParams()
   const supabase = createClient()
   const [saving, setSaving] = useState(false)
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([])
+  const [primaryDx, setPrimaryDx] = useState<Diagnosis | null>(null)
+  const [secondaryDx, setSecondaryDx] = useState<Diagnosis[]>([])
 
-  // Form state
   const [form, setForm] = useState({
     full_name: '',
     phone: '',
@@ -23,8 +27,16 @@ export default function NewPatientPage() {
     referring_physician: '',
     notes: '',
     gender: '',
-    address_text: '',  // simplified — Google Maps picker is Wave 2
+    address_text: '',
   })
+
+  useEffect(() => {
+    supabase
+      .from('apta_diagnoses')
+      .select('id, name, icd_hint, system')
+      .order('system')
+      .then(({ data }) => setDiagnoses((data as Diagnosis[]) ?? []))
+  }, [])
 
   function set(field: string, value: string) {
     setForm(prev => ({ ...prev, [field]: value }))
@@ -61,6 +73,13 @@ export default function NewPatientPage() {
         gender: (form.gender as 'male' | 'female') || null,
         address,
         created_by: user.id,
+        primary_diagnosis: primaryDx?.name ?? null,
+        primary_icd: primaryDx?.icd_hint ?? null,
+        secondary_diagnoses: secondaryDx.map(d => ({
+          id: d.id,
+          name: d.name,
+          icd_hint: d.icd_hint,
+        })) as any,
       })
       .select('id')
       .single()
@@ -86,6 +105,7 @@ export default function NewPatientPage() {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
+        {/* Required fields */}
         <div className="bg-white rounded-xl border border-border p-5 space-y-4">
           <p className="text-xs font-bold text-muted uppercase tracking-wide">Required</p>
 
@@ -163,6 +183,30 @@ export default function NewPatientPage() {
               placeholder="e.g. New Cairo, 5th Settlement"
             />
             <p className="text-xs text-muted mt-1">Google Maps picker coming in next update</p>
+          </div>
+        </div>
+
+        {/* Diagnosis */}
+        <div className="bg-white rounded-xl border border-border p-5 space-y-4">
+          <p className="text-xs font-bold text-muted uppercase tracking-wide">Diagnosis (ICD)</p>
+
+          <div>
+            <label className={labelCls}>Primary diagnosis</label>
+            <DiagnosisPicker
+              diagnoses={diagnoses}
+              value={primaryDx}
+              onChange={setPrimaryDx}
+              placeholder="Search MSK / Neuro diagnoses..."
+            />
+          </div>
+
+          <div>
+            <label className={labelCls}>Secondary diagnoses</label>
+            <SecondaryDiagnosisPicker
+              diagnoses={diagnoses}
+              value={secondaryDx}
+              onChange={setSecondaryDx}
+            />
           </div>
         </div>
 
