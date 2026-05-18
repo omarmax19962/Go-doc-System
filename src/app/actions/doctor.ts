@@ -49,6 +49,49 @@ export async function createDoctorAction(data: {
   return { success: true }
 }
 
+export async function updateDoctorAction(doctorId: string, data: {
+  specialty?: string
+  is_active?: boolean
+  covered_locations?: { place_id: string; display_name: string; lat: number; lng: number }[]
+}) {
+  const admin = createAdminClient()
+
+  const { error } = await admin
+    .from('doctors')
+    .update({
+      ...(data.specialty !== undefined && { specialty: data.specialty }),
+      ...(data.is_active !== undefined && { is_active: data.is_active }),
+      ...(data.covered_locations !== undefined && { covered_locations: data.covered_locations }),
+    })
+    .eq('id', doctorId)
+
+  if (error) return { error: friendlyError(error.message) }
+
+  revalidatePath('/admin/doctors')
+  revalidatePath(`/admin/doctors/${doctorId}`)
+  return { success: true }
+}
+
+export async function updateDoctorProfileAction(userId: string, data: {
+  full_name?: string
+  phone?: string
+}) {
+  const admin = createAdminClient()
+
+  const { error } = await admin
+    .from('profiles')
+    .update({
+      ...(data.full_name !== undefined && { full_name: data.full_name }),
+      ...(data.phone !== undefined && { phone: data.phone }),
+    })
+    .eq('id', userId)
+
+  if (error) return { error: friendlyError(error.message) }
+
+  revalidatePath('/admin/doctors')
+  return { success: true }
+}
+
 export async function acceptApplicationAction(applicationId: string) {
   const admin = createAdminClient()
   const supabase = await createServerSupabaseClient()
