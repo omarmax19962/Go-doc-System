@@ -420,7 +420,7 @@ export type Database = {
       programs: {
         Row: {
           created_at: string
-          doctor_id: string
+          doctor_id: string | null
           form_data: Json | null
           id: string
           is_active: boolean
@@ -432,7 +432,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          doctor_id: string
+          doctor_id?: string | null
           form_data?: Json | null
           id?: string
           is_active?: boolean
@@ -444,7 +444,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          doctor_id?: string
+          doctor_id?: string | null
           form_data?: Json | null
           id?: string
           is_active?: boolean

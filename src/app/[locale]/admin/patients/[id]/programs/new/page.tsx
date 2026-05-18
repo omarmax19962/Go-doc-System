@@ -54,7 +54,7 @@ export default async function NewProgramPage({
 
       <ProgramFormBuilder
         patientId={id}
-        doctorId={doctorId ?? ''}
+        doctorId={doctorId ?? null}
         visitType="assessment"
         locale={locale}
       />

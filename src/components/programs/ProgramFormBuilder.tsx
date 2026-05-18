@@ -26,7 +26,7 @@ export default function ProgramFormBuilder({
   locale,
 }: {
   patientId: string
-  doctorId: string
+  doctorId: string | null
   visitType?: string
   existingProgram?: any
   locale: string
@@ -136,19 +136,19 @@ export default function ProgramFormBuilder({
         .update({ form_data: formData as any, updated_at: new Date().toISOString() })
         .eq('id', existingProgram.id)
 
-      if (error) { toast.error('Save failed'); setSaving(false); return }
+      if (error) { toast.error(error.message); setSaving(false); return }
     } else {
       const { error } = await supabase
         .from('programs')
         .insert({
           patient_id: patientId,
-          doctor_id: doctorId,
+          doctor_id: doctorId || null,
           source: 'form_generated',
           form_data: formData as any,
           is_active: true,
         })
 
-      if (error) { toast.error('Save failed'); setSaving(false); return }
+      if (error) { toast.error(error.message); setSaving(false); return }
     }
 
     toast.success('Program saved')
