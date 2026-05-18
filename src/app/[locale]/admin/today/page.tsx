@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { format, startOfDay, endOfDay } from 'date-fns'
 import VisitCard from '@/components/admin/VisitCard'
 import TodayStats from '@/components/admin/TodayStats'

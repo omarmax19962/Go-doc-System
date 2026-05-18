@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import DoctorBottomNav from '@/components/doctor/DoctorBottomNav'
 
 export default async function DoctorLayout({

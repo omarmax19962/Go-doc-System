@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { format } from 'date-fns'
 import NoteReviewStatusBadge from '@/components/shared/NoteReviewStatusBadge'
 import Link from 'next/link'

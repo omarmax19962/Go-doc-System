@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+@source "../**/*.{ts,tsx,js,jsx}";
 
 @theme {
   /* Go Doc brand palette */
@@ -49,5 +51,3 @@
   text-align: right;
 }
 
-/* Arabic font import */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');

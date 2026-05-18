@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Link from 'next/link'
 import PatientStatusBadge from '@/components/shared/PatientStatusBadge'
 import { ChevronRight } from 'lucide-react'

@@ -1,4 +1,4 @@
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { notFound } from 'next/navigation'
 import { format } from 'date-fns'
 import { ChevronLeft, Phone, MapPin, FileText } from 'lucide-react'
