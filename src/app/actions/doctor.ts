@@ -124,37 +124,62 @@ export async function acceptApplicationAction(applicationId: string) {
     return { success: true, email: app.email, reactivated: true }
   }
 
-  // Generate a temporary password
-  const tempPassword = Math.random().toString(36).slice(-8) + 'A1!'
+  // Check if an auth user with this email already exists
+  const { data: listData } = await admin.auth.admin.listUsers({ perPage: 1000 })
+  const existingAuthUser = listData?.users?.find(u => u.email === app.email)
 
-  const { data: authData, error: authError } = await admin.auth.admin.createUser({
-    email: app.email,
-    password: tempPassword,
-    email_confirm: true,
-    user_metadata: {
-      role: 'doctor',
-      full_name: app.full_name,
-      phone: app.phone ?? '',
-    },
-  })
+  let authUserId: string
+  let tempPassword: string | undefined
 
-  if (authError || !authData.user) {
-    return { error: authError?.message ?? 'Failed to create account' }
-  }
+  if (existingAuthUser) {
+    // Reuse existing auth user — just ensure they have a doctors row
+    authUserId = existingAuthUser.id
+  } else {
+    // Create new auth user
+    tempPassword = Math.random().toString(36).slice(-8) + 'A1!'
 
-  const { error: doctorError } = await admin
-    .from('doctors')
-    .insert({
-      user_id: authData.user.id,
-      specialty: app.specialty,
-      gender: app.gender as 'male' | 'female',
-      covered_locations: [],
-      is_active: true,
+    const { data: authData, error: authError } = await admin.auth.admin.createUser({
+      email: app.email,
+      password: tempPassword,
+      email_confirm: true,
+      user_metadata: {
+        role: 'doctor',
+        full_name: app.full_name,
+        phone: app.phone ?? '',
+      },
     })
 
-  if (doctorError) {
-    await admin.auth.admin.deleteUser(authData.user.id)
-    return { error: doctorError.message }
+    if (authError || !authData.user) {
+      return { error: authError?.message ?? 'Failed to create account' }
+    }
+
+    authUserId = authData.user.id
+  }
+
+  // Upsert doctors row (create if missing, activate if already exists)
+  const { data: existingDoctor } = await admin
+    .from('doctors')
+    .select('id')
+    .eq('user_id', authUserId)
+    .single()
+
+  if (existingDoctor) {
+    await admin.from('doctors').update({ is_active: true }).eq('user_id', authUserId)
+  } else {
+    const { error: doctorError } = await admin
+      .from('doctors')
+      .insert({
+        user_id: authUserId,
+        specialty: app.specialty,
+        gender: app.gender as 'male' | 'female',
+        covered_locations: [],
+        is_active: true,
+      })
+
+    if (doctorError) {
+      if (!existingAuthUser) await admin.auth.admin.deleteUser(authUserId)
+      return { error: doctorError.message }
+    }
   }
 
   await admin
@@ -163,7 +188,7 @@ export async function acceptApplicationAction(applicationId: string) {
       status: 'accepted',
       reviewed_by: user.id,
       reviewed_at: new Date().toISOString(),
-      auth_user_id: authData.user.id,
+      auth_user_id: authUserId,
     } as any)
     .eq('id', applicationId)
 
