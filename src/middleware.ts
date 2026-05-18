@@ -19,22 +19,23 @@ export async function middleware(request: NextRequest) {
 
   // Apply i18n middleware first
   const intlResponse = intlMiddleware(request)
-
-  // Create Supabase client for auth check
   let response = intlResponse || NextResponse.next({ request })
 
+  const locale = pathname.startsWith('/ar') ? 'ar' : 'en'
+  const isAuthRoute = pathname.includes('/auth')
+  const isApplyRoute = pathname.includes('/apply')
+
+  if (isApplyRoute) return response
+
+  // Create Supabase client
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
+        getAll() { return request.cookies.getAll() },
         setAll(cookiesToSet: { name: string; value: string; options: CookieOptions }[]) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          )
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           response = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options)
@@ -44,26 +45,27 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  // Auth check — wrap in try/catch so a Supabase network hiccup
+  // never locks users out of the app
+  let user: { id: string } | null = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {
+    // If Supabase is unreachable, let public routes through;
+    // protected routes fall through to the redirect below
+  }
 
-  // Extract locale from pathname
-  const locale = pathname.startsWith('/ar') ? 'ar' : 'en'
-
-  // Public routes — no auth needed
-  const isAuthRoute = pathname.includes('/auth')
-  const isApplyRoute = pathname.includes('/apply')
-  if (isApplyRoute) return response
-
+  // Logged-in user hits /auth → redirect to their dashboard
   if (isAuthRoute) {
     if (user) {
-      // Redirect logged-in users away from auth page
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
+      let role: string | null = null
+      try {
+        const { data: profile } = await supabase
+          .from('profiles').select('role').eq('id', user.id).single()
+        role = profile?.role ?? null
+      } catch { /* ignore */ }
 
-      const role = profile?.role
       const dest = role === 'admin'
         ? `/${locale}/admin/today`
         : `/${locale}/doctor/today`
@@ -78,25 +80,24 @@ export async function middleware(request: NextRequest) {
   }
 
   // Role-based route protection
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
+  let role: string | null = null
+  try {
+    const { data: profile } = await supabase
+      .from('profiles').select('role').eq('id', user.id).single()
+    role = profile?.role ?? null
+  } catch { /* ignore — server components will re-check */ }
 
-  const role = profile?.role
   const isAdminRoute = pathname.includes('/admin')
   const isDoctorRoute = pathname.includes('/doctor')
 
   if (isAdminRoute && role !== 'admin') {
     return NextResponse.redirect(new URL(`/${locale}/doctor/today`, request.url))
   }
-
   if (isDoctorRoute && role !== 'doctor') {
     return NextResponse.redirect(new URL(`/${locale}/admin/today`, request.url))
   }
 
-  // Redirect root to role home
+  // Redirect bare locale root to role home
   if (pathname === `/${locale}` || pathname === '/') {
     const dest = role === 'admin'
       ? `/${locale}/admin/today`
