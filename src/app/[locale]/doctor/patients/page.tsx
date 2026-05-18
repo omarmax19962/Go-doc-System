@@ -15,10 +15,12 @@ export default async function DoctorPatientsPage({
   const { data: doctor } = await supabase
     .from('doctors').select('id').eq('user_id', user!.id).single()
 
-  const { data: patients } = await supabase
+  const patients = doctor ? await supabase
     .from('patients').select('*')
-    .eq('assigned_doctor_id', doctor!.id)
+    .eq('assigned_doctor_id', doctor.id)
     .order('updated_at', { ascending: false })
+    .then(r => r.data)
+  : []
 
   const active = patients?.filter(p => ['active','booked'].includes(p.status)) ?? []
   const others = patients?.filter(p => !['active','booked'].includes(p.status)) ?? []

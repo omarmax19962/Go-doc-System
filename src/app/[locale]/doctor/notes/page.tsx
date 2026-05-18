@@ -14,7 +14,7 @@ export default async function DoctorNotesPage() {
     .eq('user_id', user!.id)
     .single()
 
-  const { data: notes } = await supabase
+  const notes = doctor ? await supabase
     .from('visit_notes')
     .select(`
       *,
@@ -23,9 +23,11 @@ export default async function DoctorNotesPage() {
         patient:patients(full_name, complaint)
       )
     `)
-    .eq('doctor_id', doctor!.id)
+    .eq('doctor_id', doctor.id)
     .order('created_at', { ascending: false })
     .limit(50)
+    .then(r => r.data)
+  : []
 
   const drafts = notes?.filter(n => n.review_status === 'draft') ?? []
   const submitted = notes?.filter(n => n.review_status !== 'draft') ?? []

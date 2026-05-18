@@ -14,16 +14,18 @@ export default async function DoctorTodayPage() {
     .eq('user_id', user!.id)
     .single()
 
-  const { data: visits } = await supabase
+  const visits = doctor ? await supabase
     .from('visits')
     .select(`
       *,
       patient:patients(id, full_name, phone, complaint, status)
     `)
-    .eq('doctor_id', doctor!.id)
+    .eq('doctor_id', doctor.id)
     .gte('scheduled_at', startOfDay(today).toISOString())
     .lte('scheduled_at', endOfDay(today).toISOString())
     .order('scheduled_at', { ascending: true })
+    .then(r => r.data)
+  : []
 
   return (
     <div className="px-4 pt-6 pb-4 max-w-2xl mx-auto">
