@@ -9,15 +9,25 @@ export async function createDoctorAction(data: {
   full_name: string
   email: string
   phone: string
-  password: string
+  password?: string   // if omitted, a temp password is auto-generated
   specialty: string
   gender: string
+  bio?: string
 }) {
   const admin = createAdminClient()
 
+  // Check if email already exists
+  const { data: listData } = await admin.auth.admin.listUsers({ perPage: 1000 })
+  const existingUser = listData?.users?.find(u => u.email === data.email)
+  if (existingUser) {
+    return { error: 'An account with this email already exists.' }
+  }
+
+  const tempPassword = data.password || (Math.random().toString(36).slice(-8) + 'A1!')
+
   const { data: authData, error: authError } = await admin.auth.admin.createUser({
     email: data.email,
-    password: data.password,
+    password: tempPassword,
     email_confirm: true,
     user_metadata: {
       role: 'doctor',
@@ -27,7 +37,7 @@ export async function createDoctorAction(data: {
   })
 
   if (authError || !authData.user) {
-    return { error: friendlyError(authError?.message ?? '') }
+    return { error: authError?.message ?? 'Failed to create account' }
   }
 
   const { error: doctorError } = await admin
@@ -42,11 +52,11 @@ export async function createDoctorAction(data: {
 
   if (doctorError) {
     await admin.auth.admin.deleteUser(authData.user.id)
-    return { error: friendlyError(doctorError.message) }
+    return { error: doctorError.message }
   }
 
   revalidatePath('/admin/doctors')
-  return { success: true }
+  return { success: true, email: data.email, tempPassword }
 }
 
 export async function updateDoctorAction(doctorId: string, data: {
