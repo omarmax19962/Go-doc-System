@@ -106,7 +106,19 @@ export default function AuthPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-muted mt-8">
+        <div className="mt-6 text-center">
+          <p className="text-sm text-muted">
+            Want to join as a doctor?{' '}
+            <a
+              href={`/${locale}/apply`}
+              className="text-primary hover:underline font-medium"
+            >
+              Apply here
+            </a>
+          </p>
+        </div>
+
+        <p className="text-center text-xs text-muted mt-6">
           Go Doc © {new Date().getFullYear()}
         </p>
       </div>
